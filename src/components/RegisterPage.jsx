@@ -1,0 +1,126 @@
+import React, { useState } from 'react'
+import {useNavigate} from "react-router-dom"
+import {Eye,EyeOff} from "lucide-react"
+import { account } from '../config/Appwrite';
+
+
+
+const RegisterPage = () => {
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState('');
+  const [userData, setUserData] = useState({username:"",email:"",password:""})
+  const [loading, setLoading] = useState(false); // Add loading state
+
+    const togglePasswordVisibility = () => {
+      setShowPassword(!showPassword);
+    };
+    const handlePasswordChange = (event) => {
+      setUserData({...userData,password:event.target.value});
+      setPassword(event.target.value);
+    };
+    const signup = async(e) =>{
+      // APPWRITE CONFIGURATION 
+      e.preventDefault();
+      setLoading(true); // Start loading
+
+      try { 
+        await account.create(
+          userData.username,
+          userData.email,
+          userData.password
+        )
+        navigate("/")
+      } catch (error) {
+        alert("something went wrong")
+        setLoading(false); // Stop loading, whether successful or not
+
+      }
+      
+    }
+  return (
+    // Registration Page 
+    <div className="Register-page font-[sans-serif] rounded-l-3xl border bg-gray-900 text-[#333] ml-52 mr-52 mt-12">
+     <div className="grid  md:grid-cols-2 items-center gap-8 h-full">
+       <div className="image-part max-md:order-1 p-4">
+         <img src="https://readymadeui.com/signin-image.webp" className="lg:max-w-[80%] w-full h-full object-contain block mx-auto"/>
+       </div>
+       <div className="flex items-center md:p-8 p-6 bg-white md:rounded-tl-[55px] md:rounded-bl-[55px] h-full">
+       <form className="max-w-lg  w-full mx-auto" onSubmit={signup}>
+          <div className="mb-12">
+            <h3 className="text-4xl mt-2  font-extrabold">Create an account</h3>
+          </div>
+          <div>
+            <label className="text-xs block mb-2">Username*</label>
+            <div className="relative flex items-center">
+
+              <input name="name" type="text" required className="w-full text-sm border-b border-gray-300 focus:border-[#333] px-2 py-3 outline-none" placeholder="Enter username"onChange={(e)=>setUserData({...userData,username:e.target.value})} />
+
+              <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb" className="w-[18px] h-[18px] absolute right-2" viewBox="0 0 24 24">
+                <circle cx="10" cy="7" r="6" data-original="#000000"></circle>
+                <path d="M14 15H6a5 5 0 0 0-5 5 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 5 5 0 0 0-5-5zm8-4h-2.59l.3-.29a1 1 0 0 0-1.42-1.42l-2 2a1 1 0 0 0 0 1.42l2 2a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42l-.3-.29H22a1 1 0 0 0 0-2z" data-original="#000000"></path>
+              </svg>
+            </div>
+          </div>
+          <div className="mt-10">
+            <label className="text-xs block mb-2">Email*</label>
+            <div className="relative flex items-center">
+
+              <input name="email" type="text" required className="w-full text-sm border-b border-gray-300 focus:border-[#333] px-2 py-3 outline-none" placeholder="Enter email" onChange={(e)=>setUserData({...userData,email:e.target.value})}/>
+
+              <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb" className="w-[18px] h-[18px] absolute right-2" viewBox="0 0 682.667 682.667">
+                <defs>
+                  <clipPath id="a" clipPathUnits="userSpaceOnUse">
+                    <path d="M0 512h512V0H0Z" data-original="#000000"></path>
+                  </clipPath>
+                </defs>
+                <g clipPath="url(#a)" transform="matrix(1.33 0 0 -1.33 0 682.667)">
+                  <path fill="none" strokeMiterlimit="10" strokeWidth="40" d="M452 444H60c-22.091 0-40-17.909-40-40v-39.446l212.127-157.782c14.17-10.54 33.576-10.54 47.746 0L492 364.554V404c0 22.091-17.909 40-40 40Z" data-original="#000000"></path>
+                  <path d="M472 274.9V107.999c0-11.027-8.972-20-20-20H60c-11.028 0-20 8.973-20 20V274.9L0 304.652V107.999c0-33.084 26.916-60 60-60h392c33.084 0 60 26.916 60 60v196.653Z" data-original="#000000"></path>
+                </g>
+              </svg>
+            </div>
+          </div>
+          <div className="mt-10">
+            <label className="text-xs block mb-2">Password*</label>
+            <div className="relative flex items-center">
+              <input name="password" type={showPassword ? 'text' : 'password'}
+            value={password}
+        onChange={handlePasswordChange} required className="w-full text-sm border-b border-gray-300 focus:border-[#333] px-2 py-3 outline-none" placeholder="Enter password" />
+              {showPassword ? (
+                <Eye className="w-[20px] h-[20px] absolute right-2 cursor-pointer text-gray-400" onClick={togglePasswordVisibility} />
+              ) : (
+                <EyeOff className="w-[20px] h-[20px] absolute right-2 cursor-pointer text-gray-400" onClick={togglePasswordVisibility} />
+              )}     
+            </div>
+          </div>
+          <div className="flex items-center mt-8">
+            <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 shrink-0 rounded" />
+            <label className="ml-3 block text-sm">
+              I accept the <span className="text-blue-500 font-semibold hover:cursor-pointer ml-1">Terms and Conditions</span>
+            </label>
+          </div>
+          <div className=" mt-12">
+            <button type="submit" className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded-full text-white bg-[#333] hover:bg-[#222] focus:outline-none">
+            {loading ? (
+                  <div role="status" className='flex justify-center'>
+                    <svg aria-hidden="true" className="w-6 h-6 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                      <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+                    </svg>
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                ) : (
+                  'Create an account'
+                )}
+            </button>
+            <p className="bottom-part flex justify-center text-sm mt-8">Already have an account? <span className="text-blue-500 font-semibold hover:cursor-pointer ml-1"onClick={()=>navigate("/")}>Login here</span></p>
+          </div>
+        </form>
+       </div>
+     </div>
+   </div>
+  )
+}
+
+export default RegisterPage
